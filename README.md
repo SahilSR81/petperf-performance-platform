@@ -61,6 +61,16 @@ Implementation begins in the next phase.
 
 ---
 
+## Development Setup
+
+Project setup has started.
+
+The initial development environment and dependency management are now in place.
+
+The first performance scenarios will be added in the upcoming milestone.
+
+---
+
 ## Planned Technology Stack
 
 ```text
@@ -112,6 +122,7 @@ The objective is not simply to generate load, but to understand **how systems be
 ## Roadmap
 
 - [x] Repository initialized
+- [x] Development environment
 - [ ] Project architecture
 - [ ] Local infrastructure
 - [ ] Performance scenarios
