@@ -71,6 +71,29 @@ The first performance scenarios will be added in the upcoming milestone.
 
 ---
 
+## Milestone 1 — Performance Test Bootstrap
+
+The initial Locust module has been introduced to establish the project's performance testing foundation.
+
+The first executable load scenarios will be implemented in the next milestone.
+
+---
+
+## Folder Structure
+
+```text
+petperf-performance-platform/
+│
+├── README.md
+├── requirements.txt
+├── .gitignore
+├── .editorconfig
+├── .env.example
+└── locust/
+```
+
+---
+
 ## Planned Technology Stack
 
 ```text
