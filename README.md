@@ -94,6 +94,19 @@ petperf-performance-platform/
 
 ---
 
+## Milestone 2 — First Executable Scenario
+
+The project now contains its first executable Locust scenario targeting the Swagger Petstore API.
+
+Current scope:
+
+- Base configuration
+- HTTP client setup
+- Initial GET request
+- Ready for iterative performance scenarios
+
+---
+
 ## Planned Technology Stack
 
 ```text
