@@ -1,10 +1,10 @@
 from locust import HttpUser, task, between
-from config import BASE_URL
+from config import HOST
 
 
 class PetPerfUser(HttpUser):
     wait_time = between(1, 3)
-    host = BASE_URL
+    host = HOST
 
     @task
     def get_available_pets(self):

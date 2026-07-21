@@ -90,6 +90,11 @@ petperf-performance-platform/
 ├── .editorconfig
 ├── .env.example
 └── locust/
+    ├── locustfile.py
+    ├── config.py
+    └── utils/
+        ├── __init__.py
+        └── settings.py
 ```
 
 ---
@@ -104,6 +109,20 @@ Current scope:
 - HTTP client setup
 - Initial GET request
 - Ready for iterative performance scenarios
+
+---
+
+## Milestone 3 — Environment Configuration
+
+The framework now supports external configuration using environment variables.
+
+Current capabilities:
+
+- Configurable target host
+- Environment-based execution
+- Centralized configuration layer
+
+This lays the foundation for executing the same test suite across development, staging, and production-like environments.
 
 ---
 
@@ -159,7 +178,7 @@ The objective is not simply to generate load, but to understand **how systems be
 
 - [x] Repository initialized
 - [x] Development environment
-- [ ] Project architecture
+- [x] Project architecture
 - [ ] Local infrastructure
 - [ ] Performance scenarios
 - [ ] Observability stack
