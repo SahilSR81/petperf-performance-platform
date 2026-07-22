@@ -1,11 +1,9 @@
-from locust import HttpUser, task, between
+from locust import HttpUser, between
+
 from config import HOST
+from tasks.pet_tasks import PetTasks
 
 
-class PetPerfUser(HttpUser):
-    wait_time = between(1, 3)
+class PetPerfUser(HttpUser, PetTasks):
     host = HOST
-
-    @task
-    def get_available_pets(self):
-        self.client.get("/pet/findByStatus?status=available")
+    wait_time = between(1, 3)

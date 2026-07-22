@@ -90,11 +90,15 @@ petperf-performance-platform/
 ├── .editorconfig
 ├── .env.example
 └── locust/
+    ├── __init__.py
     ├── locustfile.py
     ├── config.py
-    └── utils/
+    ├── utils/
+    │   ├── __init__.py
+    │   └── settings.py
+    └── tasks/
         ├── __init__.py
-        └── settings.py
+        └── pet_tasks.py
 ```
 
 ---
@@ -123,6 +127,30 @@ Current capabilities:
 - Centralized configuration layer
 
 This lays the foundation for executing the same test suite across development, staging, and production-like environments.
+
+---
+
+## Milestone 4 — Modular Task Architecture
+
+The framework has been refactored to support modular, reusable task definitions.
+
+Current scope:
+
+- Task modules separated from the core runner
+- Clean imports and namespace management
+- Configurable host with URL normalization
+- Foundation for multi-scenario test suites
+
+---
+
+## Architecture
+
+The project follows a modular structure where:
+
+- User behavior is defined independently.
+- Performance scenarios are isolated into task modules.
+- Environment configuration is centralized.
+- Future workloads can be added without modifying the core runner.
 
 ---
 
