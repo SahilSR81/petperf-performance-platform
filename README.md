@@ -95,7 +95,8 @@ petperf-performance-platform/
     ├── config.py
     ├── utils/
     │   ├── __init__.py
-    │   └── settings.py
+    │   ├── settings.py
+    │   └── validators.py
     └── tasks/
         ├── __init__.py
         └── pet_tasks.py
@@ -154,6 +155,52 @@ The project follows a modular structure where:
 
 ---
 
+## Milestone 5 — Response Validation
+
+The framework now validates API correctness under load, not just generates traffic.
+
+Current scope:
+
+- Reusable response validators
+- Status code verification
+- Content-type validation
+- Catch-response pattern for meaningful failure reporting
+
+---
+
+## Current Capabilities
+
+✔ Modular task architecture
+
+✔ Environment-driven configuration
+
+✔ Reusable validation utilities
+
+✔ Executable HTTP workloads
+
+✔ Response validation
+
+✔ Ready for metrics integration
+
+✔ Extensible framework design
+
+---
+
+## Project Roadmap
+
+### Upcoming Milestones
+
+- Dockerized execution environment
+- Prometheus metrics exporter
+- Grafana dashboards
+- Multi-scenario workloads
+- CSV and HTML performance reports
+- SLA validation
+- Threshold-based failure detection
+- GitHub Actions pipeline
+
+---
+
 ## Planned Technology Stack
 
 ```text
@@ -180,20 +227,6 @@ Loguru
 
 ---
 
-## Planned Capabilities
-
-- Load Testing
-- Stress Testing
-- Spike Testing
-- Soak Testing
-- SLA Validation
-- Performance Reports
-- Live Metrics
-- Production Dashboards
-- Automated CI/CD Validation
-
----
-
 ## Long-Term Goal
 
 PetPerf is designed as a production-style Performance Engineering platform inspired by modern DevOps and Site Reliability Engineering practices.
@@ -207,8 +240,9 @@ The objective is not simply to generate load, but to understand **how systems be
 - [x] Repository initialized
 - [x] Development environment
 - [x] Project architecture
+- [x] Modular task architecture
+- [x] Response validation
 - [ ] Local infrastructure
-- [ ] Performance scenarios
 - [ ] Observability stack
 - [ ] Dashboard
 - [ ] Automated reporting
