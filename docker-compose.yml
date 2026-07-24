@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+
+  locust:
+
+    build: .
+
+    container_name: petperf-locust
+
+    ports:
+      - "8089:8089"
+
+    env_file:
+      - .env.example
+
+    volumes:
+      - .:/app

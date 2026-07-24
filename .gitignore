@@ -1,8 +1,11 @@
-.venv/
 __pycache__/
 .pytest_cache/
+.venv/
+*.pyc
 .vscode/
 .idea/
-*.pyc
+.locust/
+htmlcov/
 reports/
+logs/
 .env
