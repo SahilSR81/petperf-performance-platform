@@ -1,5 +1,6 @@
 from locust import HttpUser, between
 
+import hooks
 from config import HOST
 from tasks.pet_tasks import PetTasks
 

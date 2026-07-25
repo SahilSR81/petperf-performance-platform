@@ -41,6 +41,9 @@ Key principles:
 - Response validation (status code, content-type)
 - Dockerized execution
 - Single-command onboarding
+- Structured logging with consistent timestamp format
+- Execution telemetry and lifecycle hooks
+- Run metadata capture (run_id, target host, user count, spawn rate, duration)
 
 ---
 
@@ -58,10 +61,13 @@ petperf-performance-platform/
 │   ├── __init__.py
 │   ├── locustfile.py
 │   ├── config.py
+│   ├── hooks.py
 │   ├── utils/
 │   │   ├── __init__.py
 │   │   ├── settings.py
-│   │   └── validators.py
+│   │   ├── validators.py
+│   │   ├── logging_config.py
+│   │   └── run_context.py
 │   └── tasks/
 │       ├── __init__.py
 │       └── pet_tasks.py
@@ -109,6 +115,51 @@ source .venv/bin/activate
 pip install -r requirements.txt
 locust -f locust/locustfile.py
 ```
+
+---
+
+## Execution Telemetry
+
+The framework captures structured telemetry at every stage of a load test run:
+
+| Event | Trigger | Data Captured |
+|-------|---------|---------------|
+| `test_start` | Run begins | run_id, target_host, user_count, spawn_rate, run_time, environment |
+| `test_stop` | Run ends | duration, total_requests, total_failures, avg_response_time, fail_ratio |
+| `request` | Per request | method, endpoint, response_time_ms, response_length, error (if failed) |
+
+---
+
+## Logging Strategy
+
+- **Console logging** — Real-time output to stdout during runs
+- **Structured format** — `%(asctime)s | %(levelname)-8s | %(name)s | %(message)s`
+- **UTC timestamps** in ISO 8601 format
+- **Module-based logger names** for granular control
+- Optional file logging via `LOG_FILE` environment variable
+
+---
+
+## Run Metadata
+
+Each test run is assigned a unique `run_id` (timestamp-based) and tracks:
+
+- Target host
+- Virtual user count and spawn rate
+- Run duration
+- Environment name (standalone / master / worker)
+
+Metadata is logged at `test_start` and summarized at `test_stop`.
+
+---
+
+## Lifecycle Hooks
+
+Lifecycle hooks are wired through `locust/hooks.py` using Locust's built-in event system:
+
+- `test_start` — log initialization metadata
+- `test_stop` — log summary statistics
+- `request` — structured request timing capture, failure tagging
 
 ---
 
