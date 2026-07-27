@@ -44,6 +44,9 @@ Key principles:
 - Structured logging with consistent timestamp format
 - Execution telemetry and lifecycle hooks
 - Run metadata capture (run_id, target host, user count, spawn rate, duration)
+- Prometheus metrics export (latency, active users, errors, throughput)
+- Grafana dashboard provisioning
+- Pushgateway support for ephemeral runs
 
 ---
 
@@ -56,6 +59,23 @@ petperf-performance-platform/
 │   └── Dockerfile
 │
 ├── docker-compose.yml
+│
+├── monitoring/
+│   ├── __init__.py
+│   ├── metrics.py
+│   └── exporter.py
+│
+├── prometheus/
+│   └── prometheus.yml
+│
+├── grafana/
+│   ├── provisioning/
+│   │   ├── datasources/
+│   │   │   └── datasource.yml
+│   │   └── dashboards/
+│   │       └── dashboards.yml
+│   └── dashboards/
+│       └── petperf-overview.json
 │
 ├── locust/
 │   ├── __init__.py
@@ -163,6 +183,47 @@ Lifecycle hooks are wired through `locust/hooks.py` using Locust's built-in even
 
 ---
 
+## Observability Stack
+
+### Prometheus
+
+Prometheus scrapes metrics from the Locust process via an HTTP endpoint (`/metrics` on port `9091` by default).
+
+**Metrics captured:**
+
+| Metric | Type | Labels |
+|--------|------|--------|
+| `petperf_request_latency_seconds` | Histogram | method, endpoint, status |
+| `petperf_active_users` | Gauge | — |
+| `petperf_inflight_requests` | Gauge | — |
+| `petperf_errors_total` | Counter | method, endpoint, error_type |
+| `petperf_requests_total` | Counter | method, endpoint, status |
+
+**Scrape config** is defined in `prometheus/prometheus.yml`.
+
+### Grafana
+
+Dashboards are auto-provisioned on startup via configuration files in `grafana/provisioning/`.
+
+- **Data source** — `grafana/provisioning/datasources/datasource.yml` connects Grafana to Prometheus
+- **Dashboard provisioning** — `grafana/provisioning/dashboards/dashboards.yml` loads JSON models
+- **Overview dashboard** — `grafana/dashboards/petperf-overview.json` includes:
+  - Response time panels (p50, p95, p99)
+  - Error rate panel
+  - Active users panel
+  - Throughput panel
+
+### Running the stack
+
+```bash
+# Start Prometheus and Grafana alongside Locust
+docker compose -f docker-compose.observability.yml up
+```
+
+For ephemeral/batch runs, set `PUSHGATEWAY_URL` to push metrics instead of exposing an HTTP endpoint.
+
+---
+
 ## Roadmap
 
 ### Phase 1 — Foundation
@@ -176,8 +237,8 @@ Lifecycle hooks are wired through `locust/hooks.py` using Locust's built-in even
 
 ### Phase 2 — Observability
 
-- [ ] Prometheus metrics
-- [ ] Grafana dashboards
+- [x] Prometheus metrics
+- [x] Grafana dashboards
 - [ ] SLA validation
 - [ ] CSV reporting
 
