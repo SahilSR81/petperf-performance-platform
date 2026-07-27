@@ -1,0 +1,73 @@
+name: Performance Tests
+
+on:
+  schedule:
+    - cron: "0 6 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      users:
+        description: "Number of virtual users"
+        required: true
+        default: "25"
+      spawn_rate:
+        description: "Spawn rate (users/sec)"
+        required: true
+        default: "5"
+      run_time:
+        description: "Run duration (e.g. 5m)"
+        required: true
+        default: "5m"
+      target_host:
+        description: "Target host URL"
+        required: true
+        default: "https://petstore3.swagger.io"
+
+env:
+  TARGET_HOST: ${{ github.event.inputs.target_host || 'https://petstore3.swagger.io' }}
+  USERS: ${{ github.event.inputs.users || '25' }}
+  SPAWN_RATE: ${{ github.event.inputs.spawn_rate || '5' }}
+  RUN_TIME: ${{ github.event.inputs.run_time || '5m' }}
+
+jobs:
+  performance-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run load test
+        run: |
+          mkdir -p reports
+          locust -f locust/locustfile.py \
+            --headless \
+            -u "$USERS" \
+            -r "$SPAWN_RATE" \
+            -t "$RUN_TIME" \
+            --host "$TARGET_HOST" \
+            --csv reports/ci-run \
+            --exit-code-on-error
+
+      - name: Upload CSV reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: perf-reports
+          path: reports/
+          retention-days: 30
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: perf-html-report
+          path: reports/*_stats.html
+          retention-days: 30

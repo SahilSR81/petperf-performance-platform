@@ -47,6 +47,10 @@ Key principles:
 - Prometheus metrics export (latency, active users, errors, throughput)
 - Grafana dashboard provisioning
 - Pushgateway support for ephemeral runs
+- Predefined workload profiles (smoke, load, stress, spike, soak)
+- Load shape patterns (step, ramp-up, spike, endurance)
+- Read and write task separation
+- GitHub Actions CI pipeline with artifact uploads
 
 ---
 
@@ -54,6 +58,10 @@ Key principles:
 
 ```text
 petperf-performance-platform/
+│
+├── .github/
+│   └── workflows/
+│       └── perf.yml
 │
 ├── docker/
 │   └── Dockerfile
@@ -82,15 +90,24 @@ petperf-performance-platform/
 │   ├── locustfile.py
 │   ├── config.py
 │   ├── hooks.py
-│   ├── utils/
+│   ├── load_shapes.py
+│   ├── scenarios/
 │   │   ├── __init__.py
-│   │   ├── settings.py
-│   │   ├── validators.py
-│   │   ├── logging_config.py
-│   │   └── run_context.py
-│   └── tasks/
+│   │   ├── smoke.py
+│   │   ├── load.py
+│   │   ├── stress.py
+│   │   ├── spike.py
+│   │   └── soak.py
+│   ├── tasks/
+│   │   ├── __init__.py
+│   │   ├── pet_read_tasks.py
+│   │   └── pet_write_tasks.py
+│   └── utils/
 │       ├── __init__.py
-│       └── pet_tasks.py
+│       ├── settings.py
+│       ├── validators.py
+│       ├── logging_config.py
+│       └── run_context.py
 │
 ├── README.md
 ├── requirements.txt
@@ -224,6 +241,128 @@ For ephemeral/batch runs, set `PUSHGATEWAY_URL` to push metrics instead of expos
 
 ---
 
+## Workload Profiles
+
+Predefined workload profiles are available in `locust/scenarios/`:
+
+| Profile | File | Purpose | Users | Wait Time |
+|---------|------|---------|-------|-----------|
+| **Smoke** | `smoke.py` | Quick validation | Minimal | 1–2s |
+| **Load** | `load.py` | Normal expected traffic | Moderate | 0.5–2s |
+| **Stress** | `stress.py` | Push system limits | High | 0.1–0.5s |
+| **Spike** | `spike.py` | Sudden burst behavior | Burst | 0.3–1s |
+| **Soak** | `soak.py` | Long-duration endurance | Sustained | 2–5s |
+
+Each profile defines user behaviour with appropriate read/write ratios and think times.
+
+---
+
+## Load Shapes
+
+Custom load shapes in `locust/load_shapes.py` control how users are spawned over time:
+
+| Shape | Pattern |
+|-------|---------|
+| `StepLoadShape` | Increment users in steps every 60s |
+| `RampUpShape` | Linear ramp-up to target count |
+| `SpikeShape` | Baseline → spike → recovery cycles |
+| `EnduranceShape` | Ramp-up then hold for extended period |
+
+Use a shape with `--shape-class`:
+
+```bash
+locust -f locust/locustfile.py --headless --shape-class StepLoadShape -t 10m
+```
+
+---
+
+## Headless Execution
+
+Locust supports headless (non-UI) mode for automation and CI:
+
+```bash
+locust -f locust/locustfile.py --headless -u 50 -r 5 -t 10m --host https://petstore3.swagger.io
+```
+
+For distributed runs:
+
+```bash
+# Start master
+locust -f locust/locustfile.py --master --headless -u 100 -r 10 -t 30m
+
+# Start workers
+locust -f locust/locustfile.py --worker --master-host=localhost
+```
+
+---
+
+## CSV Reports
+
+Pass `--csv <prefix>` to generate CSV output with per-second granularity:
+
+```bash
+locust -f locust/locustfile.py --headless -u 25 -r 5 -t 5m --csv reports/run --exit-code-on-error
+```
+
+Generated files:
+- `<prefix>_stats.csv` — aggregated statistics
+- `<prefix>_stats_history.csv` — time-series stats
+- `<prefix>_failures.csv` — failure breakdown
+- `<prefix>_exceptions.csv` — exception log
+
+---
+
+## CI Gate
+
+The GitHub Actions workflow (`.github/workflows/perf.yml`) runs headless Locust and fails on non-zero exit:
+
+- Triggered by schedule (weekdays 06:00 UTC) or `workflow_dispatch`
+- Installs dependencies, runs the test, uploads CSV and HTML artifacts
+- `--exit-code-on-error` ensures the pipeline fails if any request errors occur
+
+```bash
+# Manual trigger example
+gh workflow run perf.yml -f users=50 -f spawn_rate=10 -f run_time=10m
+```
+
+---
+
+## Distributed Testing Ready
+
+The framework supports Locust's native distributed mode:
+
+- **Master** coordinates the test
+- **Workers** execute tasks independently
+- Connect via `--master` / `--worker` flags
+- Stats aggregated at the master node
+- Works with all load shapes and scenarios
+
+---
+
+## Recommended Run Examples
+
+```bash
+# Smoke test (quick validation)
+locust -f locust/locustfile.py --headless -u 5 -r 2 -t 2m --exit-code-on-error
+
+# Load test (normal traffic)
+locust -f locust/locustfile.py --headless -u 50 -r 10 -t 15m --csv reports/load-test
+
+# Stress test (push limits)
+locust -f locust/locustfile.py --headless -u 200 -r 50 -t 5m --csv reports/stress-test
+
+# Soak test (long duration)
+locust -f locust/locustfile.py --headless -u 30 -r 5 -t 60m --csv reports/soak-test
+
+# Spike test with custom shape
+locust -f locust/locustfile.py --headless --shape-class SpikeShape --csv reports/spike-test
+
+# CI run
+locust -f locust/locustfile.py --headless -u 25 -r 5 -t 5m --csv reports/ci-run --exit-code-on-error
+```
+
+---
+
 ## Roadmap
 
 ### Phase 1 — Foundation
@@ -239,16 +378,16 @@ For ephemeral/batch runs, set `PUSHGATEWAY_URL` to push metrics instead of expos
 
 - [x] Prometheus metrics
 - [x] Grafana dashboards
+- [x] CSV reporting
 - [ ] SLA validation
-- [ ] CSV reporting
 
 ### Phase 3 — Automation
 
-- [ ] GitHub Actions CI pipeline
-- [ ] Stress testing
-- [ ] Spike testing
-- [ ] Soak testing
-- [ ] Distributed load testing
+- [x] GitHub Actions CI pipeline
+- [x] Stress testing
+- [x] Spike testing
+- [x] Soak testing
+- [x] Distributed load testing
 
 ---
 
