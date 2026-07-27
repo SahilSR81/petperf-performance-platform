@@ -1,14 +1,13 @@
-from locust import HttpUser, between
+from locust import HttpUser, between, task
 
-import hooks
 from config import HOST
 from tasks.pet_read_tasks import PetReadTasks
 from tasks.pet_write_tasks import PetWriteTasks
 
 
-class PetPerfUser(HttpUser, PetReadTasks, PetWriteTasks):
+class LoadUser(HttpUser, PetReadTasks, PetWriteTasks):
     host = HOST
-    wait_time = between(1, 3)
+    wait_time = between(0.5, 2)
 
     @task(5)
     def read_flow(self):
