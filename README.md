@@ -51,6 +51,8 @@ Key principles:
 - Load shape patterns (step, ramp-up, spike, endurance)
 - Read and write task separation
 - GitHub Actions CI pipeline with artifact uploads
+- SLA validation with configurable thresholds
+- Automated HTML reporting
 
 ---
 
@@ -91,6 +93,13 @@ petperf-performance-platform/
 │   ├── config.py
 │   ├── hooks.py
 │   ├── load_shapes.py
+│   ├── assertions/
+│   │   ├── __init__.py
+│   │   ├── sla.py
+│   │   └── thresholds.py
+│   ├── reports/
+│   │   ├── __init__.py
+│   │   └── html_report.py
 │   ├── scenarios/
 │   │   ├── __init__.py
 │   │   ├── smoke.py
@@ -108,6 +117,9 @@ petperf-performance-platform/
 │       ├── validators.py
 │       ├── logging_config.py
 │       └── run_context.py
+│
+├── reports/
+│   └── .gitkeep
 │
 ├── README.md
 ├── requirements.txt
@@ -276,6 +288,67 @@ locust -f locust/locustfile.py --headless --shape-class StepLoadShape -t 10m
 
 ---
 
+## Performance Validation
+
+The framework evaluates every execution against configurable Service Level thresholds.
+
+Current validation includes:
+
+- Maximum response time
+- Failure percentage
+- Requests per second
+- Overall execution status (PASS / FAIL)
+
+Thresholds are defined in `locust/assertions/thresholds.py` and can be updated without modifying validation logic:
+
+```python
+PERFORMANCE_THRESHOLDS = {
+    "response_time": 1000,
+    "failure_rate": 1.0,
+    "requests_per_second": 20,
+}
+```
+
+Usage:
+
+```python
+from locust.assertions import validate_all
+
+result = validate_all(stats={
+    "avg_response_time": 450,
+    "failure_rate": 0.5,
+    "requests_per_second": 35,
+})
+
+print(result.overall_status)  # PASS or FAIL
+```
+
+---
+
+## Reporting
+
+Following every execution the framework can generate an HTML summary including:
+
+- Response Time
+- Throughput
+- Error Rate
+- Execution Metadata
+- SLA Result
+
+Generated reports are saved to `reports/latest-report.html`.
+
+```python
+from locust.reports import generate_html_report
+
+report_path = generate_html_report(
+    stats=stats,
+    run_metadata=run_metadata,
+    sla_status=sla_result.overall_status,
+)
+```
+
+---
+
 ## Headless Execution
 
 Locust supports headless (non-UI) mode for automation and CI:
@@ -379,7 +452,7 @@ locust -f locust/locustfile.py --headless -u 25 -r 5 -t 5m --csv reports/ci-run 
 - [x] Prometheus metrics
 - [x] Grafana dashboards
 - [x] CSV reporting
-- [ ] SLA validation
+- [x] SLA validation
 
 ### Phase 3 — Automation
 

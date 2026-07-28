@@ -6,6 +6,8 @@ __pycache__/
 .idea/
 .locust/
 htmlcov/
-reports/
+reports/*.html
+reports/*.csv
+reports/*.log
 logs/
 .env
