@@ -1,0 +1,17 @@
+[
+  {
+    "id": 101,
+    "name": "Charlie",
+    "status": "available"
+  },
+  {
+    "id": 102,
+    "name": "Max",
+    "status": "pending"
+  },
+  {
+    "id": 103,
+    "name": "Bella",
+    "status": "sold"
+  }
+]
