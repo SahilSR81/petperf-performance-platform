@@ -1,0 +1,14 @@
+[
+    {
+        "users":10,
+        "spawn_rate":2
+    },
+    {
+        "users":50,
+        "spawn_rate":5
+    },
+    {
+        "users":100,
+        "spawn_rate":10
+    }
+]

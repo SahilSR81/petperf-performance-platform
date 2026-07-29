@@ -97,6 +97,10 @@ petperf-performance-platform/
 │   │   ├── __init__.py
 │   │   ├── sla.py
 │   │   └── thresholds.py
+│   ├── data/
+│   │   ├── pets.json
+│   │   ├── pet_status.json
+│   │   └── users.json
 │   ├── reports/
 │   │   ├── __init__.py
 │   │   └── html_report.py
@@ -113,6 +117,8 @@ petperf-performance-platform/
 │   │   └── pet_write_tasks.py
 │   └── utils/
 │       ├── __init__.py
+│       ├── data_loader.py
+│       ├── payload_factory.py
 │       ├── settings.py
 │       ├── validators.py
 │       ├── logging_config.py
@@ -266,6 +272,51 @@ Predefined workload profiles are available in `locust/scenarios/`:
 | **Soak** | `soak.py` | Long-duration endurance | Sustained | 2–5s |
 
 Each profile defines user behaviour with appropriate read/write ratios and think times.
+
+---
+
+## Data-Driven Workloads
+
+Performance scenarios are powered by reusable datasets instead of hardcoded values.
+
+Current datasets include:
+
+- Pet records
+- Status combinations
+- User execution profiles
+
+Benefits:
+
+- Improved maintainability
+- Reusable workloads
+- Better scalability
+- Easier test expansion
+
+---
+
+## Framework Design
+
+The framework separates responsibilities into independent layers.
+
+- Configuration Layer
+- Scenario Layer
+- Task Layer
+- Data Layer
+- Reporting Layer
+- Monitoring Layer
+
+This architecture allows new workloads to be introduced with minimal changes to existing code.
+
+```text
+locust/
+├── tasks/
+├── utils/
+├── assertions/
+├── reports/
+├── scenarios/
+├── data/
+└── locustfile.py
+```
 
 ---
 
