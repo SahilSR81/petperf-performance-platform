@@ -1,19 +1,14 @@
-import uuid
-
 from locust import task
 
+from utils.data_loader import random_pet
+from utils.payload_factory import create_pet, update_pet
 from utils.validators import validate_status_code
 
 
 class PetWriteTasks:
     @task
     def add_pet(self):
-        pet_id = int(uuid.uuid4().int % 100000)
-        payload = {
-            "id": pet_id,
-            "name": f"pet-{pet_id}",
-            "status": "available",
-        }
+        payload = create_pet()
         with self.client.post(
             "/api/v3/pet",
             json=payload,
@@ -24,11 +19,8 @@ class PetWriteTasks:
 
     @task
     def update_pet(self):
-        payload = {
-            "id": 1,
-            "name": "updated-pet",
-            "status": "sold",
-        }
+        pet = random_pet()
+        payload = update_pet(pet_id=pet["id"])
         with self.client.put(
             "/api/v3/pet",
             json=payload,
@@ -39,8 +31,9 @@ class PetWriteTasks:
 
     @task
     def delete_pet(self):
+        pet = random_pet()
         with self.client.delete(
-            "/api/v3/pet/999999",
+            f"/api/v3/pet/{pet['id']}",
             catch_response=True,
             name="delete_pet",
         ) as resp:
