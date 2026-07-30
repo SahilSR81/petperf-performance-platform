@@ -118,6 +118,7 @@ petperf-performance-platform/
 │   └── utils/
 │       ├── __init__.py
 │       ├── data_loader.py
+│       ├── execution_profile.py
 │       ├── payload_factory.py
 │       ├── settings.py
 │       ├── validators.py
@@ -306,6 +307,12 @@ The framework separates responsibilities into independent layers.
 - Monitoring Layer
 
 This architecture allows new workloads to be introduced with minimal changes to existing code.
+
+### Execution Profiles
+
+Execution parameters are centrally managed through reusable execution profiles.
+
+This keeps load configurations consistent across local and CI executions.
 
 ```text
 locust/
