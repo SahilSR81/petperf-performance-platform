@@ -407,6 +407,12 @@ report_path = generate_html_report(
 
 ---
 
+### Request Naming
+
+Performance metrics use standardized request names to improve report readability and maintain consistency across dashboards and execution reports.
+
+---
+
 ## Headless Execution
 
 Locust supports headless (non-UI) mode for automation and CI:
