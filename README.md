@@ -413,6 +413,14 @@ Performance metrics use standardized request names to improve report readability
 
 ---
 
+### Execution Metadata
+
+Every execution records basic framework information including framework version, Python runtime, execution timestamp and target environment.
+
+This metadata helps correlate performance reports with specific framework versions and environments.
+
+---
+
 ## Headless Execution
 
 Locust supports headless (non-UI) mode for automation and CI:
