@@ -5,6 +5,7 @@ from locust import events
 from locust.exception import StopUser
 from locust.runners import MasterRunner, WorkerRunner
 
+from utils.execution_metadata import get_execution_metadata
 from utils.logging_config import get_logger
 from utils.run_context import RunContext
 
@@ -28,6 +29,13 @@ def on_test_start(environment, **kwargs):
     run_context.spawn_rate = environment.parsed_options.spawn_rate or 0
     run_context.run_time = environment.parsed_options.run_time or 0
     run_context.start_time = datetime.now(timezone.utc)
+
+    metadata = get_execution_metadata()
+
+    logger.info(
+        "Execution Metadata: %s",
+        metadata,
+    )
 
     logger.info(
         "Test started",
