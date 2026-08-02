@@ -3,7 +3,6 @@ from platform import python_version
 
 from .settings import BASE_URL
 
-
 FRAMEWORK_VERSION = "0.1.0"
 
 
