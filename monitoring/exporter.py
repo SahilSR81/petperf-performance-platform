@@ -2,7 +2,7 @@ import logging
 import os
 from threading import Thread
 
-from prometheus_client import start_http_server, push_to_gateway
+from prometheus_client import start_http_server
 
 logger = logging.getLogger(__name__)
 
