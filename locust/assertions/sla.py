@@ -19,7 +19,9 @@ class AssertionResult:
     @property
     def summary(self) -> str:
         status = "PASS" if self.passed else "FAIL"
-        return f"[{status}] {self.metric}: {self.actual:.2f} (threshold: {self.threshold})"
+        return (
+            f"[{status}] {self.metric}: {self.actual:.2f} (threshold: {self.threshold})"
+        )
 
 
 @dataclass
