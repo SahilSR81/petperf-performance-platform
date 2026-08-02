@@ -1,6 +1,6 @@
-from locust import HttpUser, between
+from locust import HttpUser, between, task
 
-import hooks
+import hooks  # noqa: F401
 from config import HOST
 from tasks.pet_read_tasks import PetReadTasks
 from tasks.pet_write_tasks import PetWriteTasks
