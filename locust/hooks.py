@@ -1,8 +1,6 @@
-import logging
 from datetime import datetime, timezone
 
 from locust import events
-from locust.exception import StopUser
 from locust.runners import MasterRunner, WorkerRunner
 
 from utils.execution_metadata import get_execution_metadata
@@ -17,9 +15,11 @@ run_context = RunContext()
 def on_init(environment, **kwargs):
     run_context.run_id = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
     run_context.target_host = environment.host or ""
-    run_context.environment_name = "master" if isinstance(
-        environment.runner, MasterRunner
-    ) else "worker" if isinstance(environment.runner, WorkerRunner) else "standalone"
+    run_context.environment_name = (
+        "master"
+        if isinstance(environment.runner, MasterRunner)
+        else "worker" if isinstance(environment.runner, WorkerRunner) else "standalone"
+    )
     logger.info("Run context initialized", extra={"run_id": run_context.run_id})
 
 
@@ -62,8 +62,12 @@ def on_test_stop(environment, **kwargs):
             "duration_seconds": round(duration, 2),
             "total_requests": stats.num_requests,
             "total_failures": stats.num_failures,
-            "avg_response_time": round(stats.total_avg_response_time, 2) if stats.num_requests else 0,
-            "fail_ratio": round(stats.total_fail_per_sec, 4) if stats.num_requests else 0,
+            "avg_response_time": (
+                round(stats.total.avg_response_time, 2) if stats.num_requests else 0
+            ),
+            "fail_ratio": (
+                round(stats.total.fail_ratio, 4) if stats.num_requests else 0
+            ),
             "environment": run_context.environment_name,
         },
     )
