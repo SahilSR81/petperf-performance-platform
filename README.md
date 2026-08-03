@@ -7,6 +7,7 @@
 ![Python](https://img.shields.io/badge/Python-3.13-blue)
 ![Locust](https://img.shields.io/badge/Locust-Latest-green)
 ![Docker](https://img.shields.io/badge/Docker-Enabled-blue)
+[![Performance Tests](https://github.com/SahilSR81/petperf-performance-platform/actions/workflows/perf.yml/badge.svg)](https://github.com/SahilSR81/petperf-performance-platform/actions/workflows/perf.yml)
 ![Status](https://img.shields.io/badge/Status-Development-orange)
 
 ---
