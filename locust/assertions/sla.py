@@ -4,7 +4,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import Any
 
-from locust.assertions.thresholds import PERFORMANCE_THRESHOLDS
+from .thresholds import PERFORMANCE_THRESHOLDS
 
 logger = logging.getLogger(__name__)
 

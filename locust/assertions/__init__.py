@@ -1,4 +1,4 @@
-from locust.assertions.sla import (
+from .sla import (
     validate_response_time,
     validate_failure_rate,
     validate_rps,
