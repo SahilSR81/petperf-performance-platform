@@ -1,3 +1,3 @@
 from utils.settings import BASE_URL
 
-HOST = BASE_URL.rstrip("/")
+HOST = (BASE_URL or "").rstrip("/") or None
