@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from locust import events
 from locust.runners import MasterRunner, WorkerRunner
 
+from assertions import validate_all
 from utils.execution_metadata import get_execution_metadata
 from utils.logging_config import get_logger
 from utils.run_context import RunContext
@@ -55,6 +56,14 @@ def on_test_stop(environment, **kwargs):
     duration = (datetime.now(timezone.utc) - run_context.start_time).total_seconds()
     stats = environment.runner.stats
 
+    sla = validate_all(
+        {
+            "avg_response_time": stats.total.avg_response_time,
+            "failure_rate": stats.total.fail_ratio,
+            "requests_per_second": stats.total.current_rps,
+        }
+    )
+
     logger.info(
         "Test finished",
         extra={
@@ -68,6 +77,7 @@ def on_test_stop(environment, **kwargs):
             "fail_ratio": (
                 round(stats.total.fail_ratio, 4) if stats.num_requests else 0
             ),
+            "sla_status": sla.overall_status,
             "environment": run_context.environment_name,
         },
     )
