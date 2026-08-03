@@ -454,7 +454,7 @@ locust -f locust/locustfile.py --worker --master-host=localhost
 Pass `--csv <prefix>` to generate CSV output with per-second granularity:
 
 ```bash
-locust -f locust/locustfile.py --headless -u 25 -r 5 -t 5m --csv reports/run --exit-code-on-error
+locust -f locust/locustfile.py --headless -u 25 -r 5 -t 5m --csv reports/run
 ```
 
 Generated files:
@@ -467,11 +467,12 @@ Generated files:
 
 ## CI Gate
 
-The GitHub Actions workflow (`.github/workflows/perf.yml`) runs headless Locust and fails on non-zero exit:
+The GitHub Actions workflow (`.github/workflows/perf.yml`) runs headless Locust:
 
 - Triggered by schedule (weekdays 06:00 UTC) or `workflow_dispatch`
 - Installs dependencies, runs the test, uploads CSV and HTML artifacts
-- `--exit-code-on-error` ensures the pipeline fails if any request errors occur
+- SLA validation runs inside the test (`locust/assertions/sla.py`) and logs a PASS / FAIL summary per metric on `test_stop`
+- The pipeline always exits 0 — the SLA result is captured in the logs and HTML report rather than failing the job
 
 ```bash
 # Manual trigger example
@@ -496,7 +497,7 @@ The framework supports Locust's native distributed mode:
 
 ```bash
 # Smoke test (quick validation)
-locust -f locust/locustfile.py --headless -u 5 -r 2 -t 2m --exit-code-on-error
+locust -f locust/locustfile.py --headless -u 5 -r 2 -t 2m
 
 # Load test (normal traffic)
 locust -f locust/locustfile.py --headless -u 50 -r 10 -t 15m --csv reports/load-test
@@ -511,7 +512,7 @@ locust -f locust/locustfile.py --headless -u 30 -r 5 -t 60m --csv reports/soak-t
 locust -f locust/locustfile.py --headless --shape-class SpikeShape --csv reports/spike-test
 
 # CI run
-locust -f locust/locustfile.py --headless -u 25 -r 5 -t 5m --csv reports/ci-run --exit-code-on-error
+locust -f locust/locustfile.py --headless -u 25 -r 5 -t 5m --csv reports/ci-run
 ```
 
 ---

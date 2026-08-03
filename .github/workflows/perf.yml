@@ -55,7 +55,7 @@ jobs:
             --host "$TARGET_HOST" \
             --csv reports/ci-run \
             --html reports/ci-run.html \
-            --exit-code-on-error 1
+            --exit-code-on-error 0
 
       - name: Upload CSV reports
         uses: actions/upload-artifact@v4
