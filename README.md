@@ -421,6 +421,14 @@ This metadata helps correlate performance reports with specific framework versio
 
 ---
 
+### API Client Layer
+
+HTTP communication is routed through a lightweight client wrapper.
+
+This abstraction keeps request behavior centralized and allows future enhancements such as retries, authentication, logging and custom headers without modifying individual workload definitions.
+
+---
+
 ## Headless Execution
 
 Locust supports headless (non-UI) mode for automation and CI:
