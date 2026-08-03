@@ -54,7 +54,8 @@ jobs:
             -t "$RUN_TIME" \
             --host "$TARGET_HOST" \
             --csv reports/ci-run \
-            --exit-code-on-error
+            --html reports/ci-run.html \
+            --exit-code-on-error 1
 
       - name: Upload CSV reports
         uses: actions/upload-artifact@v4
@@ -69,5 +70,5 @@ jobs:
         if: always()
         with:
           name: perf-html-report
-          path: reports/*_stats.html
+          path: reports/ci-run.html
           retention-days: 30
