@@ -1,5 +1,7 @@
 from locust.clients import ResponseContextManager
 
+from .retry import get_retry_policy
+
 
 class ApiClient:
     def __init__(self, client):
@@ -13,6 +15,8 @@ class ApiClient:
         name=None,
         catch_response=True,
     ) -> ResponseContextManager:
+        policy = get_retry_policy()  # noqa: F841
+
         return self.client.get(
             endpoint,
             params=params,
