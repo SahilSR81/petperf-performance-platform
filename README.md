@@ -175,6 +175,12 @@ Every execution records framework version, Python runtime, execution timestamp, 
 
 HTTP communication is routed through a lightweight client wrapper (`locust/utils/api_client.py`), keeping request behavior centralized and workload definitions independent of infrastructure concerns.
 
+### Request Context
+
+Every outgoing request is prepared through a centralized request context.
+
+The framework currently injects a unique correlation identifier and common request headers to improve traceability and prepare the framework for future observability integrations.
+
 ### Retry Strategy
 
 The framework introduces a reusable retry policy abstraction.
