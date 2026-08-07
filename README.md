@@ -99,6 +99,12 @@ locust/
 
 Structured logging with UTC timestamps; optional file logging via `LOG_FILE`.
 
+### Execution Summary
+
+At the end of every performance run the framework prints a concise execution summary containing target environment, user configuration and execution timestamp.
+
+This provides a quick overview before detailed metrics are analyzed.
+
 ---
 
 ## Observability Stack
