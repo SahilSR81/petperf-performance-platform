@@ -4,7 +4,9 @@ from locust import events
 from locust.runners import MasterRunner, WorkerRunner
 
 from assertions import validate_all
+from utils import settings
 from utils.execution_metadata import get_execution_metadata
+from utils.execution_summary import print_execution_summary
 from utils.logging_config import get_logger
 from utils.run_context import RunContext
 
@@ -62,6 +64,13 @@ def on_test_stop(environment, **kwargs):
             "failure_rate": stats.total.fail_ratio,
             "requests_per_second": stats.total.current_rps,
         }
+    )
+
+    print_execution_summary(
+        target=get_execution_metadata()["target"],
+        users=run_context.user_count,
+        spawn_rate=settings.SPAWN_RATE,
+        run_time=settings.RUN_TIME,
     )
 
     logger.info(
