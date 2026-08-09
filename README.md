@@ -99,6 +99,12 @@ locust/
 
 Structured logging with UTC timestamps; optional file logging via `LOG_FILE`.
 
+### HTTP Result Classification
+
+HTTP responses are classified centrally by status-code family to provide consistent handling across workloads.
+
+This classification will be reused by performance metrics and reporting components.
+
 ### Execution Summary
 
 At the end of every performance run the framework prints a concise execution summary containing target environment, user configuration and execution timestamp.
