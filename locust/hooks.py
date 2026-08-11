@@ -4,6 +4,9 @@ from locust import events
 from locust.runners import MasterRunner, WorkerRunner
 
 from assertions import validate_all
+from monitoring.request_metrics import (
+    RequestMetricsCollector,
+)
 from utils import settings
 from utils.execution_metadata import get_execution_metadata
 from utils.execution_summary import print_execution_summary
@@ -12,6 +15,7 @@ from utils.run_context import RunContext
 
 logger = get_logger(__name__)
 run_context = RunContext()
+collector = RequestMetricsCollector()
 
 
 @events.init.add_listener
@@ -89,6 +93,24 @@ def on_test_stop(environment, **kwargs):
             "sla_status": sla.overall_status,
             "environment": run_context.environment_name,
         },
+    )
+
+
+@events.request.add_listener
+def collect_request_metric(
+    request_type,
+    name,
+    response_time,
+    response_length,
+    exception,
+    **kwargs,
+):
+    collector.record(
+        method=request_type,
+        name=name,
+        response_time=response_time,
+        response_size=response_length,
+        success=exception is None,
     )
 
 
