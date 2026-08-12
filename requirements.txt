@@ -1,3 +1,4 @@
 locust
+prometheus-client
 python-dotenv
 requests

@@ -7,6 +7,10 @@ from assertions import validate_all
 from monitoring.request_metrics import (
     RequestMetricsCollector,
 )
+from monitoring.prometheus_exporter import (
+    start_metrics_server,
+    update_active_users,
+)
 from utils import settings
 from utils.execution_metadata import get_execution_metadata
 from utils.execution_summary import print_execution_summary
@@ -29,6 +33,8 @@ def on_init(environment, **kwargs):
     )
     logger.info("Run context initialized", extra={"run_id": run_context.run_id})
 
+    start_metrics_server()
+
 
 @events.test_start.add_listener
 def on_test_start(environment, **kwargs):
@@ -36,6 +42,8 @@ def on_test_start(environment, **kwargs):
     run_context.spawn_rate = environment.parsed_options.spawn_rate or 0
     run_context.run_time = environment.parsed_options.run_time or 0
     run_context.start_time = datetime.now(timezone.utc)
+
+    update_active_users(run_context.user_count)
 
     metadata = get_execution_metadata()
 

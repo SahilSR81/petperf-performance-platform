@@ -67,6 +67,8 @@ locust/
 ├── hooks.py             # Lifecycle hooks
 ├── load_shapes.py       # Load shape patterns
 ├── monitoring/          # Custom metrics collection
+│   ├── request_metrics.py
+│   └── prometheus_exporter.py
 ├── assertions/          # SLA validation
 ├── data/                # Reusable datasets
 ├── reports/             # HTML reporting
@@ -98,6 +100,12 @@ On `test_stop` the run prints an execution summary (target environment, user con
 PetPerf captures normalized request-level metrics including latency, response size, request type, endpoint name, and success status.
 
 These metrics form the foundation for the upcoming Prometheus integration.
+
+### Prometheus Metrics
+
+PetPerf now exposes runtime performance metrics through a Prometheus-compatible endpoint.
+
+Current metrics include request count, failures, response latency and active users.
 
 Prometheus scrapes the Locust process via `/metrics` on port `9091`. Metrics include latency histograms, active users, in-flight requests, and error counters, labeled by method, endpoint, and status.
 

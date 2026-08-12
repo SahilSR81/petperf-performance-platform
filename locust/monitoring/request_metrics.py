@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+from .prometheus_exporter import record_request
+
 
 @dataclass
 class RequestMetric:
@@ -31,6 +33,12 @@ class RequestMetricsCollector:
                 response_size=response_size,
                 success=success,
             )
+        )
+        record_request(
+            method=method,
+            name=name,
+            response_time=response_time,
+            success=success,
         )
 
     @property
